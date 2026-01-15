@@ -5,12 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Widgets
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -22,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.thevinesh.thewall.FeatureItem
 import com.thevinesh.thewall.TheWallContent
 import com.thevinesh.thewall.TheWallSheet
@@ -48,20 +53,39 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TheWallSampleApp() {
     var showTheWall by remember { mutableStateOf(true) }
-    
+    var showCloseableWall by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Main content (shown behind TheWall sheet)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = if (showTheWall) "TheWall shown..." else "Welcome! 🎉",
-                style = MaterialTheme.typography.headlineMedium
-            )
+            if (showTheWall) {
+                Text(
+                    text = "TheWall shown...",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            } else {
+                // Welcome screen with demo button
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Welcome! 🎉",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(onClick = { showCloseableWall = true }) {
+                        Text("Demo Wall with Close Button")
+                    }
+                }
+            }
         }
-        
-        // TheWall sheet overlay
+
+        // TheWall sheet overlay (onboarding)
         if (showTheWall) {
             TheWallSheet(
                 content = TheWallContent(
@@ -87,6 +111,34 @@ fun TheWallSampleApp() {
                 ),
                 onCtaClicked = {
                     showTheWall = false
+                }
+            )
+        }
+
+        // TheWall sheet with close button (demo)
+        if (showCloseableWall) {
+            TheWallSheet(
+                content = TheWallContent(
+                    title = "Closeable Wall Demo",
+                    features = listOf(
+                        FeatureItem(
+                            icon = Icons.Default.Widgets,
+                            title = "Optional Close",
+                            description = "This wall can be dismissed using the close button in the top-right"
+                        ),
+                        FeatureItem(
+                            icon = Icons.Default.Refresh,
+                            title = "Or Use CTA",
+                            description = "You can still use the CTA button to proceed"
+                        )
+                    ),
+                    ctaText = "Continue"
+                ),
+                onCtaClicked = {
+                    showCloseableWall = false
+                },
+                onClose = {
+                    showCloseableWall = false
                 }
             )
         }

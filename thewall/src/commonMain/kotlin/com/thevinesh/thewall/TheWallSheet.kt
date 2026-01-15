@@ -18,9 +18,12 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,11 +42,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 /**
- * Displays a non-dismissable TheWall bottom sheet.
- * The only way to dismiss is by clicking the CTA button.
+ * Displays a TheWall bottom sheet.
+ * Can be dismissed by clicking the CTA button, or optionally via close button.
  *
  * @param content The content configuration (title, features, CTA)
  * @param onCtaClicked Called when the CTA button is pressed
+ * @param onClose Optional callback for close button. If provided, renders close button in top-right.
  * @param theme Optional theme customization (defaults to Material3)
  * @param modifier Optional modifier for the sheet container
  */
@@ -51,6 +55,7 @@ import kotlinx.coroutines.launch
 fun TheWallSheet(
     content: TheWallContent,
     onCtaClicked: () -> Unit,
+    onClose: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     theme: TheWallTheme = TheWallTheme()
 ) {
@@ -87,57 +92,75 @@ fun TheWallSheet(
             color = backgroundColor,
             tonalElevation = 2.dp
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(theme.contentPadding)
-                    .windowInsetsPadding(WindowInsets.navigationBars),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Title
-                Text(
-                    text = content.title,
-                    style = if (theme.titleStyle == androidx.compose.ui.text.TextStyle.Default) {
-                        MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-                    } else {
-                        theme.titleStyle
-                    },
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // Features
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(theme.contentPadding)
+                        .windowInsetsPadding(WindowInsets.navigationBars),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    content.features.forEach { feature ->
-                        FeatureRow(
-                            feature = feature,
-                            theme = theme,
-                            iconTint = iconTint
+                    // Title
+                    Text(
+                        text = content.title,
+                        style = if (theme.titleStyle == androidx.compose.ui.text.TextStyle.Default) {
+                            MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                        } else {
+                            theme.titleStyle
+                        },
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // Features
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        content.features.forEach { feature ->
+                            FeatureRow(
+                                feature = feature,
+                                theme = theme,
+                                iconTint = iconTint
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // CTA Button
+                    Button(
+                        onClick = onCtaClicked,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = theme.ctaButtonColors ?: ButtonDefaults.buttonColors(),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(
+                            text = content.ctaText,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                
+                // Close button - positioned in top-right corner
+                if (onClose != null) {
+                    IconButton(
+                        onClick = onClose,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                // CTA Button
-                Button(
-                    onClick = onCtaClicked,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = theme.ctaButtonColors ?: ButtonDefaults.buttonColors(),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(
-                        text = content.ctaText,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
