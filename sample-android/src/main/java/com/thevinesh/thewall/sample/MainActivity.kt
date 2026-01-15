@@ -1,4 +1,4 @@
-package com.thevinesh.onboarding.sample
+package com.thevinesh.thewall.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,11 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.thevinesh.onboarding.FeatureItem
-import com.thevinesh.onboarding.OnboardingContent
-import com.thevinesh.onboarding.OnboardingSheet
-import com.thevinesh.onboarding.OnboardingSheetWithState
-import com.thevinesh.onboarding.OnboardingStateProvider
+import com.thevinesh.thewall.FeatureItem
+import com.thevinesh.thewall.TheWallContent
+import com.thevinesh.thewall.TheWallSheet
+import com.thevinesh.thewall.TheWallStateProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    OnboardingSampleApp()
+                    TheWallSampleApp()
                 }
             }
         }
@@ -47,25 +46,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun OnboardingSampleApp() {
-    var showOnboarding by remember { mutableStateOf(true) }
+fun TheWallSampleApp() {
+    var showTheWall by remember { mutableStateOf(true) }
     
     Box(modifier = Modifier.fillMaxSize()) {
-        // Main content (shown behind the onboarding sheet)
+        // Main content (shown behind TheWall sheet)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = if (showOnboarding) "Onboarding shown..." else "Welcome! 🎉",
+                text = if (showTheWall) "TheWall shown..." else "Welcome! 🎉",
                 style = MaterialTheme.typography.headlineMedium
             )
         }
         
-        // Onboarding sheet overlay
-        if (showOnboarding) {
-            OnboardingSheet(
-                content = OnboardingContent(
+        // TheWall sheet overlay
+        if (showTheWall) {
+            TheWallSheet(
+                content = TheWallContent(
                     title = "Welcome to the App",
                     features = listOf(
                         FeatureItem(
@@ -87,7 +86,7 @@ fun OnboardingSampleApp() {
                     ctaText = "Get Started"
                 ),
                 onCtaClicked = {
-                    showOnboarding = false
+                    showTheWall = false
                 }
             )
         }
@@ -95,10 +94,10 @@ fun OnboardingSampleApp() {
 }
 
 /**
- * Example implementation of OnboardingStateProvider using in-memory storage.
+ * Example implementation of TheWallStateProvider using in-memory storage.
  * In a real app, you would use DataStore, SharedPreferences, etc.
  */
-class InMemoryOnboardingState : OnboardingStateProvider {
+class InMemoryTheWallState : TheWallStateProvider {
     private var shown = false
     
     override suspend fun hasBeenShown(): Boolean = shown

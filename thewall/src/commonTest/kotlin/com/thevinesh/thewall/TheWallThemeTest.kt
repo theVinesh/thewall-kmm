@@ -1,4 +1,4 @@
-package com.thevinesh.onboarding
+package com.thevinesh.thewall
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
@@ -8,11 +8,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class OnboardingThemeTest {
+class TheWallThemeTest {
     
     @Test
     fun `default theme uses unspecified colors`() {
-        val theme = OnboardingTheme()
+        val theme = TheWallTheme()
         
         assertEquals(Color.Unspecified, theme.backgroundColor)
         assertEquals(Color.Unspecified, theme.iconTint)
@@ -20,7 +20,7 @@ class OnboardingThemeTest {
     
     @Test
     fun `default theme uses default text styles`() {
-        val theme = OnboardingTheme()
+        val theme = TheWallTheme()
         
         assertEquals(TextStyle.Default, theme.titleStyle)
         assertEquals(TextStyle.Default, theme.featureTitleStyle)
@@ -29,21 +29,21 @@ class OnboardingThemeTest {
     
     @Test
     fun `default theme has null button colors`() {
-        val theme = OnboardingTheme()
+        val theme = TheWallTheme()
         
         assertNull(theme.ctaButtonColors)
     }
     
     @Test
     fun `default theme has 28dp corner radius`() {
-        val theme = OnboardingTheme()
+        val theme = TheWallTheme()
         
         assertEquals(28.dp, theme.cornerRadius)
     }
     
     @Test
     fun `default theme has 24dp content padding`() {
-        val theme = OnboardingTheme()
+        val theme = TheWallTheme()
         
         assertEquals(PaddingValues(24.dp), theme.contentPadding)
     }
@@ -53,7 +53,7 @@ class OnboardingThemeTest {
         val customColor = Color.Red
         val customRadius = 16.dp
         
-        val theme = OnboardingTheme(
+        val theme = TheWallTheme(
             backgroundColor = customColor,
             cornerRadius = customRadius
         )

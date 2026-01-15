@@ -1,4 +1,4 @@
-package com.thevinesh.onboarding
+package com.thevinesh.thewall
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ButtonColors
@@ -8,12 +8,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Theme configuration for the onboarding sheet.
+ * Theme configuration for TheWall sheet.
  * All properties have sensible Material3 defaults.
  *
  * Pass [Color.Unspecified] or [TextStyle.Default] to use theme defaults.
  */
-data class OnboardingTheme(
+data class TheWallTheme(
     /**
      * Background color of the sheet. Uses Material3 surface by default.
      */

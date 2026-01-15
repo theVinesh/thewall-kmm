@@ -1,6 +1,6 @@
-# Onboarding Sheet KMM
+# TheWall KMM
 
-A reusable, non-dismissable onboarding bottom sheet for Kotlin Multiplatform Mobile (Android & iOS) using Compose Multiplatform.
+A reusable, non-dismissable bottom sheet for Kotlin Multiplatform Mobile (Android & iOS) using Compose Multiplatform.
 
 ## Features
 
@@ -16,16 +16,16 @@ A reusable, non-dismissable onboarding bottom sheet for Kotlin Multiplatform Mob
 
 ```bash
 cd your-project
-git submodule add https://github.com/theVinesh/onboarding-sheet-kmm libs/onboarding-sheet
+git submodule add https://github.com/theVinesh/thewall-kmm libs/thewall
 ```
 
 In your `settings.gradle.kts`:
 
 ```kotlin
-includeBuild("libs/onboarding-sheet") {
+includeBuild("libs/thewall") {
     dependencySubstitution {
-        substitute(module("com.thevinesh:onboarding-sheet"))
-            .using(project(":onboarding-sheet"))
+        substitute(module("com.thevinesh:thewall"))
+            .using(project(":thewall"))
     }
 }
 ```
@@ -34,18 +34,18 @@ In your app's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.thevinesh:onboarding-sheet:1.0.0")
+    implementation("com.thevinesh:thewall:1.0.0")
 }
 ```
 
 ### Usage
 
 ```kotlin
-import com.thevinesh.onboarding.*
+import com.thevinesh.thewall.*
 
 // Basic usage
-OnboardingSheet(
-    content = OnboardingContent(
+TheWallSheet(
+    content = TheWallContent(
         title = "Welcome to MyApp",
         features = listOf(
             FeatureItem(
@@ -71,7 +71,7 @@ For automatic "has shown" tracking:
 
 ```kotlin
 // 1. Implement the state provider
-class MyOnboardingState(private val dataStore: DataStore<Preferences>) : OnboardingStateProvider {
+class MyTheWallState(private val dataStore: DataStore<Preferences>) : TheWallStateProvider {
     override suspend fun hasBeenShown(): Boolean = 
         dataStore.data.first()[ONBOARDING_SHOWN] == true
     
@@ -81,9 +81,9 @@ class MyOnboardingState(private val dataStore: DataStore<Preferences>) : Onboard
 }
 
 // 2. Use the state-aware composable
-OnboardingSheetWithState(
-    stateProvider = MyOnboardingState(dataStore),
-    content = myOnboardingContent,
+TheWallSheetWithState(
+    stateProvider = MyTheWallState(dataStore),
+    content = myTheWallContent,
     onCtaClicked = { /* Navigate */ }
 )
 ```
@@ -91,10 +91,10 @@ OnboardingSheetWithState(
 ## Customization
 
 ```kotlin
-OnboardingSheet(
+TheWallSheet(
     content = myContent,
     onCtaClicked = { },
-    theme = OnboardingTheme(
+    theme = TheWallTheme(
         backgroundColor = Color.White,
         cornerRadius = 32.dp,
         iconTint = MyAppColors.primary,
@@ -105,7 +105,7 @@ OnboardingSheet(
 
 ## API Reference
 
-### `OnboardingContent`
+### `TheWallContent`
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -121,7 +121,7 @@ OnboardingSheet(
 | `title` | `String` | Feature title (required, non-blank) |
 | `description` | `String` | Feature description |
 
-### `OnboardingTheme`
+### `TheWallTheme`
 
 All properties have Material3 defaults. Pass `Color.Unspecified` to use theme colors.
 
@@ -136,10 +136,10 @@ All properties have Material3 defaults. Pass `Color.Unspecified` to use theme co
 
 ```bash
 # Build library
-./gradlew :onboarding-sheet:build
+./gradlew :thewall:build
 
 # Run tests
-./gradlew :onboarding-sheet:desktopTest
+./gradlew :thewall:desktopTest
 
 # Run sample app (requires Android device/emulator)
 ./gradlew :sample-android:installDebug

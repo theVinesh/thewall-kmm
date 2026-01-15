@@ -1,4 +1,4 @@
-package com.thevinesh.onboarding
+package com.thevinesh.thewall
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -7,11 +7,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class OnboardingContentTest {
+class TheWallContentTest {
     
     @Test
     fun `content with valid data is created successfully`() {
-        val content = OnboardingContent(
+        val content = TheWallContent(
             title = "Welcome",
             features = listOf(
                 FeatureItem(
@@ -30,7 +30,7 @@ class OnboardingContentTest {
     
     @Test
     fun `content with empty features list is valid`() {
-        val content = OnboardingContent(
+        val content = TheWallContent(
             title = "Welcome",
             features = emptyList(),
             ctaText = "Get Started"
@@ -42,7 +42,7 @@ class OnboardingContentTest {
     @Test
     fun `content with blank title throws exception`() {
         assertFailsWith<IllegalArgumentException> {
-            OnboardingContent(
+            TheWallContent(
                 title = "   ",
                 features = emptyList(),
                 ctaText = "Get Started"
@@ -53,7 +53,7 @@ class OnboardingContentTest {
     @Test
     fun `content with blank CTA text throws exception`() {
         assertFailsWith<IllegalArgumentException> {
-            OnboardingContent(
+            TheWallContent(
                 title = "Welcome",
                 features = emptyList(),
                 ctaText = ""

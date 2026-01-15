@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "onboarding-sheet-kmm"
-include(":onboarding-sheet")
+rootProject.name = "thewall-kmm"
+include(":thewall")
 include(":sample-android")

@@ -24,7 +24,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { target ->
         target.binaries.framework {
-            baseName = "OnboardingSheet"
+            baseName = "TheWall"
             isStatic = true
         }
     }
@@ -53,7 +53,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.thevinesh.onboarding"
+    namespace = "com.thevinesh.thewall"
     compileSdk = 35
 
     defaultConfig {

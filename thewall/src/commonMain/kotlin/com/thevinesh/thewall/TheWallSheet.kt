@@ -1,6 +1,8 @@
-package com.thevinesh.onboarding
+package com.thevinesh.thewall
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 /**
- * Displays a non-dismissable onboarding bottom sheet.
+ * Displays a non-dismissable TheWall bottom sheet.
  * The only way to dismiss is by clicking the CTA button.
  *
  * @param content The content configuration (title, features, CTA)
@@ -46,11 +48,11 @@ import kotlinx.coroutines.launch
  * @param modifier Optional modifier for the sheet container
  */
 @Composable
-fun OnboardingSheet(
-    content: OnboardingContent,
+fun TheWallSheet(
+    content: TheWallContent,
     onCtaClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    theme: OnboardingTheme = OnboardingTheme()
+    theme: TheWallTheme = TheWallTheme()
 ) {
     val backgroundColor = if (theme.backgroundColor == Color.Unspecified) {
         MaterialTheme.colorScheme.surface
@@ -68,7 +70,12 @@ fun OnboardingSheet(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { /* Consume clicks on scrim - do nothing */ }
+            ),
         contentAlignment = Alignment.BottomCenter
     ) {
         Surface(
@@ -139,7 +146,7 @@ fun OnboardingSheet(
 @Composable
 private fun FeatureRow(
     feature: FeatureItem,
-    theme: OnboardingTheme,
+    theme: TheWallTheme,
     iconTint: Color
 ) {
     Row(
@@ -191,11 +198,11 @@ private fun FeatureRow(
  * @param theme Optional theme customization (defaults to Material3)
  */
 @Composable
-fun OnboardingSheetWithState(
-    stateProvider: OnboardingStateProvider,
-    content: OnboardingContent,
+fun TheWallSheetWithState(
+    stateProvider: TheWallStateProvider,
+    content: TheWallContent,
     onCtaClicked: () -> Unit,
-    theme: OnboardingTheme = OnboardingTheme()
+    theme: TheWallTheme = TheWallTheme()
 ) {
     val scope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
@@ -208,7 +215,7 @@ fun OnboardingSheetWithState(
     }
     
     if (hasChecked && showSheet) {
-        OnboardingSheet(
+        TheWallSheet(
             content = content,
             onCtaClicked = {
                 scope.launch {

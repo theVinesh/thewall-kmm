@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thevinesh.onboarding.sample"
+    namespace = "com.thevinesh.thewall.sample"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.thevinesh.onboarding.sample"
+        applicationId = "com.thevinesh.thewall.sample"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":onboarding-sheet"))
+    implementation(project(":thewall"))
     
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.compose.material3:material3")
