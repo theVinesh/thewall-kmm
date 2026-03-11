@@ -1,5 +1,13 @@
 package com.thevinesh.thewall
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +49,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+
+private enum class TheWallDismissAction {
+    Cta,
+    Close,
+}
 
 /**
  * Displays a TheWall bottom sheet.
@@ -59,6 +73,11 @@ fun TheWallSheet(
     modifier: Modifier = Modifier,
     theme: TheWallTheme = TheWallTheme()
 ) {
+    val onCtaClickedState by rememberUpdatedState(onCtaClicked)
+    val onCloseState by rememberUpdatedState(onClose)
+    val visibilityState = remember { MutableTransitionState(false) }
+    var pendingDismissAction by remember { mutableStateOf<TheWallDismissAction?>(null) }
+
     val backgroundColor = if (theme.backgroundColor == Color.Unspecified) {
         MaterialTheme.colorScheme.surface
     } else {
@@ -71,94 +90,143 @@ fun TheWallSheet(
         theme.iconTint
     }
 
+    val scrimAlpha by animateFloatAsState(
+        targetValue = if (visibilityState.targetState) 0.5f else 0f,
+        animationSpec = tween(durationMillis = 220),
+        label = "thewall-scrim-alpha"
+    )
+
+    LaunchedEffect(Unit) {
+        visibilityState.targetState = true
+    }
+
+    LaunchedEffect(visibilityState.isIdle, visibilityState.currentState, pendingDismissAction) {
+        if (!visibilityState.isIdle || visibilityState.currentState) {
+            return@LaunchedEffect
+        }
+
+        when (pendingDismissAction) {
+            TheWallDismissAction.Cta -> onCtaClickedState()
+            TheWallDismissAction.Close -> onCloseState?.invoke()
+            null -> Unit
+        }
+        pendingDismissAction = null
+    }
+
+    fun startDismiss(action: TheWallDismissAction) {
+        if (pendingDismissAction != null) return
+        pendingDismissAction = action
+        visibilityState.targetState = false
+    }
+
+    val shouldRenderOverlay =
+        visibilityState.currentState || visibilityState.targetState || pendingDismissAction != null
+
     // Full screen scrim + bottom sheet
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { /* Consume clicks on scrim - do nothing */ }
-            ),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(
-                topStart = theme.cornerRadius,
-                topEnd = theme.cornerRadius
-            ),
-            color = backgroundColor,
-            tonalElevation = 2.dp
+    if (shouldRenderOverlay) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = scrimAlpha))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { /* Consume clicks on scrim - do nothing */ }
+                ),
+            contentAlignment = Alignment.BottomCenter
         ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(theme.contentPadding)
-                        .windowInsetsPadding(WindowInsets.navigationBars),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            AnimatedVisibility(
+                visibleState = visibilityState,
+                modifier = modifier.align(Alignment.BottomCenter),
+                enter = slideInVertically(
+                    animationSpec = tween(durationMillis = 280),
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ) + fadeIn(animationSpec = tween(durationMillis = 220)),
+                exit = slideOutVertically(
+                    animationSpec = tween(durationMillis = 240),
+                    targetOffsetY = { fullHeight -> fullHeight }
+                ) + fadeOut(animationSpec = tween(durationMillis = 180))
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(
+                        topStart = theme.cornerRadius,
+                        topEnd = theme.cornerRadius
+                    ),
+                    color = backgroundColor,
+                    tonalElevation = 2.dp
                 ) {
-                    // Title
-                    Text(
-                        text = content.title,
-                        style = if (theme.titleStyle == androidx.compose.ui.text.TextStyle.Default) {
-                            MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-                        } else {
-                            theme.titleStyle
-                        },
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    
-                    Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Features
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        content.features.forEach { feature ->
-                            FeatureRow(
-                                feature = feature,
-                                theme = theme,
-                                iconTint = iconTint
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(theme.contentPadding)
+                                .windowInsetsPadding(WindowInsets.navigationBars),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Title
+                            Text(
+                                text = content.title,
+                                style = if (theme.titleStyle == androidx.compose.ui.text.TextStyle.Default) {
+                                    MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                                } else {
+                                    theme.titleStyle
+                                },
+                                color = MaterialTheme.colorScheme.onSurface
                             )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            // Features
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                content.features.forEach { feature ->
+                                    FeatureRow(
+                                        feature = feature,
+                                        theme = theme,
+                                        iconTint = iconTint
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            // CTA Button
+                            Button(
+                                onClick = { startDismiss(TheWallDismissAction.Cta) },
+                                enabled = pendingDismissAction == null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp),
+                                colors = theme.ctaButtonColors ?: ButtonDefaults.buttonColors(),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Text(
+                                    text = content.ctaText,
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(32.dp))
-                    
-                    // CTA Button
-                    Button(
-                        onClick = onCtaClicked,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = theme.ctaButtonColors ?: ButtonDefaults.buttonColors(),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Text(
-                            text = content.ctaText,
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-                
-                // Close button - positioned in top-right corner
-                if (onClose != null) {
-                    IconButton(
-                        onClick = onClose,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+
+                        // Close button - positioned in top-right corner
+                        if (onClose != null) {
+                            IconButton(
+                                onClick = { startDismiss(TheWallDismissAction.Close) },
+                                enabled = pendingDismissAction == null,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
                     }
                 }
             }
