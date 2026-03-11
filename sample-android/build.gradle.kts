@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":thewall"))
+    implementation(project(":sample-shared"))
     
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.compose.material3:material3")

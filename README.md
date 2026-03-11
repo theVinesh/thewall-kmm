@@ -10,6 +10,12 @@ A reusable, non-dismissable bottom sheet for Kotlin Multiplatform Mobile (Androi
 - ✅ **State Management** - Built-in support for tracking "has shown" state
 - ✅ **Lightweight** - No storage dependencies (host app provides storage)
 
+## Sample apps
+
+- `sample-android/` is the Android host app for local demo and integration checks.
+- `sample-ios/` is a checked-in SwiftUI/Xcode sample app for local iOS simulator builds.
+- Both samples exercise the same two demo flows through `sample-shared/`: the onboarding wall and the closeable-wall demo.
+
 ## Quick Start
 
 ### Installation (Git Submodule)
@@ -135,15 +141,26 @@ All properties have Material3 defaults. Pass `Color.Unspecified` to use theme co
 ## Building
 
 ```bash
-# Build library
+# Build the library
 ./gradlew :thewall:build
 
-# Run tests
+# Run library tests
 ./gradlew :thewall:desktopTest
 
-# Run sample app (requires Android device/emulator)
-./gradlew :sample-android:installDebug
+# Compile the Android sample app
+./gradlew :sample-android:compileDebugKotlin
+
+# Build the Kotlin framework used by the iOS sample
+./gradlew :sample-shared:linkDebugFrameworkIosSimulatorArm64
 ```
+
+The iOS sample lives in `sample-ios/`. Open `sample-ios/sample-ios.xcodeproj` in Xcode and run the `sample-ios` scheme, or build it from the command line:
+
+```bash
+xcodebuild -project sample-ios/sample-ios.xcodeproj -scheme sample-ios -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build
+```
+
+The checked-in Xcode project regenerates `TheWallSampleShared.framework` from `sample-shared/` during the build, so a normal Xcode build is enough after cloning the repo.
 
 ## License
 

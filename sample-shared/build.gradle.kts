@@ -11,50 +11,42 @@ kotlin {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
-    
-    // JVM target for running tests
+
     jvm("desktop") {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { target ->
         target.binaries.framework {
-            baseName = "TheWall"
+            baseName = "TheWallSampleShared"
             isStatic = true
         }
     }
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":thewall"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
         }
-        
+
         commonTest.dependencies {
             implementation(kotlin("test"))
-        }
-        
-        androidMain.dependencies {
-            // Android-specific dependencies if needed
-        }
-        
-        iosMain.dependencies {
-            // iOS-specific dependencies if needed
         }
     }
 }
 
 android {
-    namespace = "com.thevinesh.thewall"
+    namespace = "com.thevinesh.thewall.sample.shared"
     compileSdk = 35
 
     defaultConfig {

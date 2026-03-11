@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "thewall-kmm"
 include(":thewall")
+include(":sample-shared")
 include(":sample-android")

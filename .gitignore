@@ -8,6 +8,10 @@ build/
 *.iml
 .DS_Store
 
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+
 # Kotlin
 .kotlin/
 
